@@ -1,0 +1,12 @@
+sequenceDiagram
+    participant browser
+    participant server
+
+    browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+    Note right of browser: Body: {content: "brrrr", date: "2026-08-22T17:34:44.761Z"}
+    Note right of browser: Pushes the note to the notes list
+    Note right of browser: Redraw notes
+    activate server
+    Note left of server: Pushes the new note to the database
+
+    deactivate server
