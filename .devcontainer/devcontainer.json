@@ -1,0 +1,23 @@
+{
+  "name": "React / Node 24",
+
+  "image": "node:24-bookworm",
+
+  "workspaceFolder": "/workspace/${localWorkspaceFolderBasename}",
+
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/workspace/${localWorkspaceFolderBasename},type=bind"
+  ],
+
+  "remoteUser": "node",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "openai.chatgpt"
+      ]
+    }
+  }
+}
