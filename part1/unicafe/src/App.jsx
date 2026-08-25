@@ -8,7 +8,7 @@ const Button = (props) => {
   );
 };
 
-const Statistic = ({ name, val }) => {
+const StatisticLine = ({ name, val }) => {
   return (
     <>
       <p>
@@ -26,12 +26,12 @@ const Statistics = ({ good, neutral, bad }) => {
   if (total > 0) {
     return (
       <>
-        <Statistic name={"good"} val={good} />
-        <Statistic name={"neutral"} val={neutral} />
-        <Statistic name={"bad"} val={bad} />
-        <Statistic name={"all"} val={total} />
-        <Statistic name={"average"} val={getAvg()} />
-        <Statistic name={"positive"} val={getPositive()} />
+        <StatisticLine name={"good"} val={good} />
+        <StatisticLine name={"neutral"} val={neutral} />
+        <StatisticLine name={"bad"} val={bad} />
+        <StatisticLine name={"all"} val={total} />
+        <StatisticLine name={"average"} val={getAvg()} />
+        <StatisticLine name={"positive"} val={getPositive()} />
       </>
     );
   } else {
