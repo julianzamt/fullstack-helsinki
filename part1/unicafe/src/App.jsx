@@ -10,11 +10,10 @@ const Button = (props) => {
 
 const StatisticLine = ({ name, val }) => {
   return (
-    <>
-      <p>
-        {name}: {val}
-      </p>
-    </>
+    <tr>
+      <th scope="row">{name}:</th>
+      <td>{val}</td>
+    </tr>
   );
 };
 
@@ -26,16 +25,20 @@ const Statistics = ({ good, neutral, bad }) => {
   if (total > 0) {
     return (
       <>
-        <StatisticLine name={"good"} val={good} />
-        <StatisticLine name={"neutral"} val={neutral} />
-        <StatisticLine name={"bad"} val={bad} />
-        <StatisticLine name={"all"} val={total} />
-        <StatisticLine name={"average"} val={getAvg()} />
-        <StatisticLine name={"positive"} val={getPositive()} />
+        <table>
+          <tbody>
+            <StatisticLine name={"good"} val={good} />
+            <StatisticLine name={"neutral"} val={neutral} />
+            <StatisticLine name={"bad"} val={bad} />
+            <StatisticLine name={"all"} val={total} />
+            <StatisticLine name={"average"} val={getAvg()} />
+            <StatisticLine name={"positive"} val={getPositive()} />
+          </tbody>
+        </table>
       </>
     );
   } else {
-    return <p>No feedback given</p>
+    return <p>No feedback given</p>;
   }
 };
 
@@ -45,9 +48,9 @@ const App = () => {
   const [neutral, setNeutral] = useState(0);
   const [bad, setBad] = useState(0);
 
-  console.log("g: ", good)
-  console.log("n: ", neutral)
-  console.log("b: ", bad)
+  console.log("g: ", good);
+  console.log("n: ", neutral);
+  console.log("b: ", bad);
 
   return (
     <>
@@ -57,7 +60,7 @@ const App = () => {
       <Button onClick={() => setBad(bad + 1)} name="bad" />
 
       <h2>Statistics</h2>
-      <Statistics good={good} bad={bad} neutral={neutral}/>
+      <Statistics good={good} bad={bad} neutral={neutral} />
     </>
   );
 };
