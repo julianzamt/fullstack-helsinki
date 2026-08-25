@@ -56,6 +56,7 @@ const App = () => {
 
     return maxIndex;
   }
+  
 
   return (
     <div>
