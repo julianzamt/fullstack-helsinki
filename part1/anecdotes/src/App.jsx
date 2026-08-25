@@ -22,9 +22,9 @@ const App = () => {
 
   const [selected, setSelected] = useState(0);
 
-  const getRnd = () =>
-    Math.floor(new Date().getMilliseconds()) % anecdotes.length;
+  const getRnd = () => Math.floor(Math.random() * anecdotes.length);
 
+  
   const handleClick = () => {
     const rnd = getRnd();
 
