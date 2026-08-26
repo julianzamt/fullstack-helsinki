@@ -34,9 +34,17 @@ const App = () => {
 
   const handleAdd = (e) => {
     e.preventDefault();
-    const newPerson = { name: newName, number: newNumber, id: persons.length + 1};
+    const newPerson = {
+      name: newName,
+      number: newNumber,
+      id: persons.length + 1,
+    };
     if (isAdded()) {
       alert(`${newName} already added`);
+      return;
+    }
+    if (newName === "") {
+      alert(`No empty additions`);
       return;
     }
     setPersons(persons.concat(newPerson));
