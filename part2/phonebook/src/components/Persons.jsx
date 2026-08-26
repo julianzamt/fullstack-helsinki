@@ -8,7 +8,7 @@ const Person = ({ name, number }) => {
 
 const Persons = ({ persons }) => {
   const ps = persons.map((p) => (
-    <Person key={p.name} name={p.name} number={p.number} />
+    <Person key={p.id} name={p.name} number={p.number} />
   ));
   return <ul>{ps}</ul>;
 };

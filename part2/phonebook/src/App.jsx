@@ -25,7 +25,6 @@ const App = () => {
   const isAdded = () => {
     for (let i = 0; i < persons.length; i++) {
       if (persons[i].name === newName) {
-        alert(`${newName} already added`);
         return true;
       }
     }
@@ -35,8 +34,14 @@ const App = () => {
 
   const handleAdd = (e) => {
     e.preventDefault();
-    const newPerson = { name: newName, number: newNumber };
-    if (!isAdded()) setPersons(persons.concat(newPerson));
+    const newPerson = { name: newName, number: newNumber, id: persons.length + 1};
+    if (isAdded()) {
+      alert(`${newName} already added`);
+      return;
+    }
+    setPersons(persons.concat(newPerson));
+    setNewName("");
+    setNewNumber("");
   };
 
   const handleFilter = (e) => {
@@ -50,13 +55,15 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Filter handleFilter={handleFilter} />
+      <Filter onFilterChange={handleFilter} filterStr={filterStr} />
 
       <h2>Add a new</h2>
       <PersonForm
-        handleName={handleName}
-        handleNumber={handleNumber}
-        handleAdd={handleAdd}
+        onNameChange={handleName}
+        onNumberChange={handleNumber}
+        onSubmit={handleAdd}
+        newName={newName}
+        newNumber={newNumber}
       />
 
       <h2>Numbers</h2>
