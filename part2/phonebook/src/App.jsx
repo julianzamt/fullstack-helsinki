@@ -9,9 +9,21 @@ const App = () => {
     setNewName(e.target.value);
   };
 
+  const isAdded = () => {
+    for (let i = 0; i < persons.length; i++) {
+      if (persons[i].name === newName) {
+        alert(`${newName} already added`);
+        return true;
+      }
+    }
+
+    return false;
+  };
+
   const handleAdd = (e) => {
     e.preventDefault();
-    setPersons(persons.concat({ name: newName }));
+    const newPerson = { name: newName };
+    if (!isAdded()) setPersons(persons.concat(newPerson));
   };
 
   return (
