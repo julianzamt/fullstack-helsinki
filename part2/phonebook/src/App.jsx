@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import Persons from "./components/Persons";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
+import personService from "./services/persons";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -11,9 +11,7 @@ const App = () => {
   const [filterStr, setFilterStr] = useState("");
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/persons")
-      .then((res) => setPersons(res.data));
+    personService.getAll().then((persons) => setPersons(persons));
   }, []);
 
   const handleName = (e) => {
@@ -49,7 +47,8 @@ const App = () => {
       alert(`No empty additions`);
       return;
     }
-    setPersons(persons.concat(newPerson));
+
+    personService.create(newPerson).then((np) => setPersons(persons.concat(np)));
     setNewName("");
     setNewNumber("");
   };
