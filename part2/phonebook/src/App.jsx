@@ -3,7 +3,6 @@ import Persons from "./components/Persons";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import personService from "./services/persons";
-import { getPersonByName, isAdded } from "./helpers";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -23,36 +22,42 @@ const App = () => {
     setNewNumber(e.target.value);
   };
 
+  const updatePerson = (existingPerson, newPerson) => {
+    personService.update(existingPerson.id, newPerson).then((updatedPerson) => {
+      setPersons((currentPersons) =>
+        currentPersons.map((p) =>
+          p.id === updatedPerson.id ? updatedPerson : p,
+        ),
+      );
+    });
+
+    setNewName("");
+    setNewNumber("");
+  };
+
   const handleAdd = (e) => {
     e.preventDefault();
     const newPerson = {
       name: newName,
       number: newNumber,
     };
-    if (isAdded(newName, persons)) {
-      if (confirm(`${newName} already added, replace the number?`)) {
-        const person = getPersonByName(newName, persons);
-
-        personService.update(person, newPerson).then((updatedPerson) => {
-          console.log({ updatedPerson });
-          setPersons(
-            persons.map((p) => (p.name === newPerson.name ? updatedPerson : p)),
-          );
-        });
-
-        setNewName("");
-        setNewNumber("");
-        return;
-      }
-    }
     if (newName === "") {
       alert(`No empty additions`);
       return;
     }
 
+    const existingPerson = persons.find((person) => person.name === newName);
+
+    if (existingPerson) {
+      if (!confirm(`${newPerson.name} already added, replace the number?`))
+        return;
+      updatePerson(existingPerson, newPerson);
+      return;
+    }
+
     personService
       .create(newPerson)
-      .then((np) => setPersons(persons.concat(np)));
+      .then((np) => setPersons((currentPersons) => currentPersons.concat(np)));
     setNewName("");
     setNewNumber("");
   };
@@ -65,7 +70,11 @@ const App = () => {
     if (confirm(`Are you sure to delete ${name}?`)) {
       personService
         .remove(id)
-        .then((del) => setPersons(persons.filter((p) => p.id !== del.id)));
+        .then((del) =>
+          setPersons((currentPersons) =>
+            currentPersons.filter((p) => p.id !== del.id),
+          ),
+        );
     }
   };
 
