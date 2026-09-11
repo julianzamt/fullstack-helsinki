@@ -3,12 +3,14 @@ import Persons from "./components/Persons";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import personService from "./services/persons";
+import Success from "./components/Success.jsx";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filterStr, setFilterStr] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
 
   useEffect(() => {
     personService.getAll().then((persons) => setPersons(persons));
@@ -58,8 +60,16 @@ const App = () => {
     personService
       .create(newPerson)
       .then((np) => setPersons((currentPersons) => currentPersons.concat(np)));
+
     setNewName("");
     setNewNumber("");
+
+    showSuccessMsg(`${newName} added`);
+  };
+
+  const showSuccessMsg = (msg) => {
+    setSuccessMsg(msg);
+    setTimeout(() => setSuccessMsg(""), 3000);
   };
 
   const handleFilter = (e) => {
@@ -85,9 +95,10 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Success message={successMsg} />
       <Filter onFilterChange={handleFilter} filterStr={filterStr} />
 
-      <h2>Add a new</h2>
+      <h2>Add a new person</h2>
       <PersonForm
         onNameChange={handleName}
         onNumberChange={handleNumber}
