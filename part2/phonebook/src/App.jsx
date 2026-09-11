@@ -3,14 +3,15 @@ import Persons from "./components/Persons";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import personService from "./services/persons";
-import Success from "./components/Success.jsx";
+import Feedback from "./components/Feedback.jsx";
+import { ERR, SUCCESS } from "./constants.js";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filterStr, setFilterStr] = useState("");
-  const [successMsg, setSuccessMsg] = useState("");
+  const [feedback, setFeedback] = useState(null);
 
   useEffect(() => {
     personService.getAll().then((persons) => setPersons(persons));
@@ -25,13 +26,18 @@ const App = () => {
   };
 
   const updatePerson = (existingPerson, newPerson) => {
-    personService.update(existingPerson.id, newPerson).then((updatedPerson) => {
-      setPersons((currentPersons) =>
-        currentPersons.map((p) =>
-          p.id === updatedPerson.id ? updatedPerson : p,
-        ),
-      );
-    });
+    personService
+      .update(existingPerson.id, newPerson)
+      .then((updatedPerson) => {
+        setPersons((currentPersons) =>
+          currentPersons.map((p) =>
+            p.id === updatedPerson.id ? updatedPerson : p,
+          ),
+        );
+      })
+      .catch(() => {
+        showFeedback(`${existingPerson.name} already removed`, ERR);
+      });
 
     setNewName("");
     setNewNumber("");
@@ -64,12 +70,12 @@ const App = () => {
     setNewName("");
     setNewNumber("");
 
-    showSuccessMsg(`${newName} added`);
+    showFeedback(`${newName} added`, SUCCESS);
   };
 
-  const showSuccessMsg = (msg) => {
-    setSuccessMsg(msg);
-    setTimeout(() => setSuccessMsg(""), 3000);
+  const showFeedback = (msg, type) => {
+    setFeedback({ msg, type });
+    setTimeout(() => setFeedback(null), 3000);
   };
 
   const handleFilter = (e) => {
@@ -95,7 +101,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Success message={successMsg} />
+      <Feedback feedback={feedback} />
       <Filter onFilterChange={handleFilter} filterStr={filterStr} />
 
       <h2>Add a new person</h2>
