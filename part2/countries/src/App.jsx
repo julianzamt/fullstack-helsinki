@@ -24,7 +24,7 @@ function App() {
   };
 
   const filteredCountries = countries.filter((c) =>
-    c.name.common.toLowerCase().startsWith(search.toLowerCase()),
+    c.name.common.toLowerCase().includes(search.toLowerCase()),
   );
 
   const countryToShow =
@@ -34,7 +34,7 @@ function App() {
     <>
       <CountriesForm onChange={onChange} search={search} />
 
-      {filteredCountries.length > 10 && (
+      {search && filteredCountries.length > 10 && (
         <Feedback msg="Too many matches, specify another filter" />
       )}
 

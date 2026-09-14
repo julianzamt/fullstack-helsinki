@@ -21,7 +21,12 @@ const Country = ({ country }) => {
       <h3>Population: {country.population}</h3>
       <h4>Languages</h4>
       <ul>{langs}</ul>
-      <Weather city={capital} lat={country.latlng[0]} lon={country.latlng[1]} />
+      <Weather
+        key={`${country.latlng[0]}-${country.latlng[1]}`}
+        city={capital}
+        lat={country.latlng[0]}
+        lon={country.latlng[1]}
+      />
     </div>
   );
 };

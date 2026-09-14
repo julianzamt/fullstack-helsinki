@@ -6,12 +6,11 @@ const Weather = ({ city, lat, lon }) => {
 
   useEffect(() => {
     weatherService.get(lat, lon).then((w) => {
-      console.log(w);
       setWeather(w);
     });
   }, [lat, lon]);
 
-  if (!weather) return null;
+  if (!weather) return <p>Loading weather...</p>;
 
   return (
     <div>
