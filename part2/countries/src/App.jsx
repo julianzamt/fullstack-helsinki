@@ -19,7 +19,9 @@ function App() {
   }, []);
 
   const onChange = (e) => {
-    // setSearch(e.target.value);
+    setFilteredCountries(null);
+    setFeedback(null);
+    setCountry(null);
 
     if (e.target.value === "") {
       setFilteredCountries(null);
@@ -51,11 +53,15 @@ function App() {
     console.log(filtered);
   };
 
+  const handleShow = (country) => {
+    setCountry(country);
+  };
+
   return (
     <>
       <CountriesForm onChange={onChange} />
       <Feedback feedback={feedback} />
-      <CountriesList countries={filteredCountries} />
+      <CountriesList countries={filteredCountries} onShow={handleShow} />
       <Country country={country} />
     </>
   );

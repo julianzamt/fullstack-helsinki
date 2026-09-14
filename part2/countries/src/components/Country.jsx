@@ -3,7 +3,9 @@ const Country = ({ country }) => {
 
   console.log({ country });
 
-  const langs = Object.values(country.languages).map((l) => <li>{l}</li>);
+  const langs = Object.values(country.languages).map((l) => (
+    <li key={l}>{l}</li>
+  ));
 
   const style = {
     fontSize: 100,
