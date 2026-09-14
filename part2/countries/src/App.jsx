@@ -3,66 +3,46 @@ import CountriesForm from "./components/CountriesForm";
 import CountriesList from "./components/CountriesList";
 import Feedback from "./components/Feedback";
 import Country from "./components/Country";
-import axios from "axios";
+import countriesService from "./services/countries";
 
 function App() {
-  // const [search, setSearch] = useState("");
-  const [countries, setCountries] = useState(null);
+  const [countries, setCountries] = useState([]);
+  const [search, setSearch] = useState("");
   const [country, setCountry] = useState(null);
-  const [filteredCountries, setFilteredCountries] = useState(null);
-  const [feedback, setFeedback] = useState(null);
 
   useEffect(() => {
-    axios
-      .get("https://studies.cs.helsinki.fi/restcountries/api/all")
-      .then((res) => setCountries(res.data));
+    countriesService.get().then((cs) => setCountries(cs));
   }, []);
 
   const onChange = (e) => {
-    setFilteredCountries(null);
-    setFeedback(null);
+    setSearch(e.target.value.toLowerCase());
     setCountry(null);
-
-    if (e.target.value === "") {
-      setFilteredCountries(null);
-      setFeedback(null);
-      return;
-    }
-
-    const filtered = countries.filter((c) =>
-      c.name.common.toLowerCase().startsWith(e.target.value.toLowerCase()),
-    );
-
-    if (filtered.length <= 10) {
-      setFilteredCountries(filtered);
-      setFeedback(null);
-    } else {
-      setFeedback({
-        msg: "Too many matches, specify another filter",
-        type: "error",
-      });
-      setFilteredCountries(null);
-    }
-
-    if (filtered.length === 1) {
-      setFilteredCountries(null);
-      setFeedback(null);
-      setCountry(filtered[0]);
-    }
-
-    console.log(filtered);
   };
 
   const handleShow = (country) => {
     setCountry(country);
   };
 
+  const filteredCountries = countries.filter((c) =>
+    c.name.common.toLowerCase().startsWith(search.toLowerCase()),
+  );
+
+  const countryToShow =
+    country || (filteredCountries.length === 1 ? filteredCountries[0] : null);
+
   return (
     <>
-      <CountriesForm onChange={onChange} />
-      <Feedback feedback={feedback} />
-      <CountriesList countries={filteredCountries} onShow={handleShow} />
-      <Country country={country} />
+      <CountriesForm onChange={onChange} search={search} />
+
+      {filteredCountries.length > 10 && (
+        <Feedback msg="Too many matches, specify another filter" />
+      )}
+
+      {filteredCountries.length <= 10 && filteredCountries.length > 1 && (
+        <CountriesList countries={filteredCountries} onShow={handleShow} />
+      )}
+
+      <Country country={countryToShow} />
     </>
   );
 }

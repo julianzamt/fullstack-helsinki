@@ -1,11 +1,11 @@
-const Feedback = ({ feedback }) => {
-  if (!feedback) return;
+const Feedback = ({ msg }) => {
+  if (!msg) return;
 
   const style = {
     color: "red",
   };
 
-  return <div style={style}>{feedback.msg}</div>;
+  return <div style={style}>{msg}</div>;
 };
 
 export default Feedback;

@@ -1,7 +1,7 @@
 import Weather from "./Weather";
 
 const Country = ({ country }) => {
-  if (!country) return;
+  if (!country) return null;
 
   const langs = Object.values(country.languages).map((l) => (
     <li key={l}>{l}</li>
