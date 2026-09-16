@@ -50,13 +50,14 @@ app.delete("/api/persons/:id", (req, res) => {
 app.post("/api/persons", (req, res) => {
   const body = req.body;
 
-  console.log({ body });
-  console.log(body.name);
-  console.log(body.number);
-
   if (!body.name || !body.number)
     return res.status(400).json({
       error: "content missing",
+    });
+
+  if (persons.some((p) => p.name === body.name))
+    return res.status(400).json({
+      error: "name must be unique",
     });
 
   const newPerson = {
@@ -71,7 +72,7 @@ app.post("/api/persons", (req, res) => {
 
 app.get("/info", (req, res) => {
   return res.send(
-    `<h1> Phonebook has info for ${Object.keys(persons).length} persons</h1> <h2>${new Date()}</h2>`,
+    `<h1> Phonebook has info for ${persons.length} persons</h1> <h2>${new Date()}</h2>`,
   );
 });
 

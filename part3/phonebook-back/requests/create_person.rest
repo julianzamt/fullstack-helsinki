@@ -2,6 +2,14 @@ POST http://localhost:3001/api/persons
 Content-Type: application/json
 
 {
-    "name": "culo",
+    "name": "Juan Carlos",
     "number": 123
+}
+
+### Error
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name": "Tomás"
 }
