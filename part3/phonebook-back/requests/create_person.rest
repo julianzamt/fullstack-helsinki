@@ -13,3 +13,12 @@ Content-Type: application/json
 {
     "name": "Tomás"
 }
+
+###
+POST https://phonebook-helsinki-usv8.onrender.com/api/persons
+Content-Type: application/json
+
+{
+    "name": "Juan Carlos",
+    "number": 123
+}
