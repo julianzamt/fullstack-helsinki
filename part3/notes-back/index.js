@@ -1,35 +1,35 @@
-const express = require("express");
-const app = express();
+const express = require('express');
 
+const app = express();
 app.use(express.json());
 
 let notes = [
   {
-    id: "1",
-    content: "HTML is easy",
+    id: '1',
+    content: 'HTML is easy',
     important: true,
   },
   {
-    id: "2",
-    content: "Pene can execute only JavaScript",
+    id: '2',
+    content: 'Pene can execute only JavaScript',
     important: false,
   },
   {
-    id: "3",
-    content: "GET and POST are the most important methods of HTTP protocol",
+    id: '3',
+    content: 'GET and POST are the most important methods of HTTP protocol',
     important: true,
   },
 ];
 
-app.get("/", (request, response) => {
-  response.send("<h1>Hello World!</h1>");
+app.get('/', (request, response) => {
+  response.send('<h1>Hello World!</h1>');
 });
 
-app.get("/api/notes", (request, response) => {
+app.get('/api/notes', (request, response) => {
   response.json(notes);
 });
 
-app.get("/api/notes/:id", (request, response) => {
+app.get('/api/notes/:id', (request, response) => {
   const id = request.params.id;
   const note = notes.find((note) => note.id === id);
 
@@ -40,7 +40,7 @@ app.get("/api/notes/:id", (request, response) => {
   }
 });
 
-app.delete("/api/notes/:id", (request, response) => {
+app.delete('/api/notes/:id', (request, response) => {
   const id = request.params.id;
   notes = notes.filter((note) => note.id !== id);
 
@@ -53,12 +53,12 @@ const generateId = () => {
   return String(maxId + 1);
 };
 
-app.post("/api/notes", (request, response) => {
+app.post('/api/notes', (request, response) => {
   const body = request.body;
 
   if (!body.content) {
     return response.status(400).json({
-      error: "content missing",
+      error: 'content missing',
     });
   }
 
@@ -74,7 +74,7 @@ app.post("/api/notes", (request, response) => {
 });
 
 const unknownEndpoint = (request, response) => {
-  response.status(404).send({ error: "unknown endpoint" });
+  response.status(404).send({ error: 'unknown endpoint' });
 };
 
 app.use(unknownEndpoint);
