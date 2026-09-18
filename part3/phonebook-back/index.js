@@ -1,6 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const app = express();
+const Person = require('./models/persons');
 
 app.use(express.json());
 app.use(express.static('dist'));
@@ -20,49 +21,16 @@ app.use(
   }),
 );
 
-let persons = [
-  {
-    id: '1',
-    name: 'Arto Hellas',
-    number: '040-123456',
-  },
-  {
-    id: '2',
-    name: 'Ada Lovelace',
-    number: '39-44-5323523',
-  },
-  {
-    id: '3',
-    name: 'Dan Abramov',
-    number: '12-43-234345',
-  },
-  {
-    id: '4',
-    name: 'Mary Poppendieck',
-    number: '39-23-6423122',
-  },
-];
-
-const generateId = () => {
-  return String(Math.floor(Math.random() * 1_000_000));
-};
-
 app.get('/api/persons', (req, res) => {
-  return res.json(persons);
+  Person.find({}).then((persons) => res.json(persons));
 });
 
 app.get('/api/persons/:id', (req, res) => {
-  const person = persons.find((p) => p.id === req.params.id);
-
-  if (!person) return res.status(404).end();
-
-  return res.json(person);
+  Person.findById(req.params.id).then((p) => res.json(p));
 });
 
 app.delete('/api/persons/:id', (req, res) => {
-  persons = persons.filter((p) => p.id !== req.params.id);
-
-  return res.status(204).end();
+  Person.findByIdAndDelete(req.params.id).then(() => res.status(204).end());
 });
 
 app.post('/api/persons', (req, res) => {
@@ -73,24 +41,24 @@ app.post('/api/persons', (req, res) => {
       error: 'content missing',
     });
 
-  if (persons.some((p) => p.name === body.name))
-    return res.status(400).json({
-      error: 'name must be unique',
-    });
+  // if (persons.some((p) => p.name === body.name))
+  //   return res.status(400).json({
+  //     error: 'name must be unique',
+  //   });
 
-  const newPerson = {
-    ...body,
-    id: generateId(),
-  };
+  const newPerson = new Person({
+    name: body.name,
+    number: body.number,
+  });
 
-  persons = persons.concat(newPerson);
-
-  return res.json(newPerson);
+  newPerson.save().then((p) => res.json(p));
 });
 
 app.get('/info', (req, res) => {
-  return res.send(
-    `<h1> Phonebook has info for ${persons.length} persons</h1> <h2>${new Date()}</h2>`,
+  Person.countDocuments({}).then((count) =>
+    res.send(
+      `<h1> Phonebook has info for ${count} persons</h1> <h2>${new Date()}</h2>`,
+    ),
   );
 });
 
@@ -100,5 +68,5 @@ const unknownEndpoint = (request, response) => {
 
 app.use(unknownEndpoint);
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
