@@ -25,8 +25,16 @@ app.get('/api/persons', (req, res) => {
   Person.find({}).then((persons) => res.json(persons));
 });
 
-app.get('/api/persons/:id', (req, res) => {
-  Person.findById(req.params.id).then((p) => res.json(p));
+app.get('/api/persons/:id', (req, res, next) => {
+  Person.findById(req.params.id)
+    .then((p) => {
+      if (p) {
+        res.json(p);
+      } else {
+        res.status(404).end();
+      }
+    })
+    .catch((e) => next(e));
 });
 
 app.delete('/api/persons/:id', (req, res) => {
@@ -40,11 +48,6 @@ app.post('/api/persons', (req, res) => {
     return res.status(400).json({
       error: 'content missing',
     });
-
-  // if (persons.some((p) => p.name === body.name))
-  //   return res.status(400).json({
-  //     error: 'name must be unique',
-  //   });
 
   const newPerson = new Person({
     name: body.name,
@@ -67,6 +70,18 @@ const unknownEndpoint = (request, response) => {
 };
 
 app.use(unknownEndpoint);
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' });
+  }
+
+  next(error);
+};
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
