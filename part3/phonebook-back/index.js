@@ -57,6 +57,27 @@ app.post('/api/persons', (req, res) => {
   newPerson.save().then((p) => res.json(p));
 });
 
+app.put('/api/persons/:id', (req, res, next) => {
+  const p = Person.findById(req.params.id)
+    .then((p) => {
+      if (p) {
+        const body = req.body;
+
+        if (!body.number)
+          return res.status(400).json({
+            error: 'content missing',
+          });
+
+        p.number = body.number;
+
+        return p.save().then((updatedP) => res.json(updatedP));
+      } else {
+        res.status(404).end();
+      }
+    })
+    .catch((e) => next(e));
+});
+
 app.get('/info', (req, res) => {
   Person.countDocuments({}).then((count) =>
     res.send(

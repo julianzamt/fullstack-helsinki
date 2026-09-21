@@ -28,9 +28,9 @@ const App = () => {
   const updatePerson = (existingPerson, newPerson) => {
     personService
       .update(existingPerson.id, newPerson)
-      .then(() => {
+      .then((updatedPerson) => {
         setPersons((currentPersons) =>
-          currentPersons.map((p) => (p.id === newPerson.id ? newPerson : p)),
+          currentPersons.map((p) => (p.id === updatedPerson.id ? updatedPerson : p)),
         );
       })
       .catch((e) => {
