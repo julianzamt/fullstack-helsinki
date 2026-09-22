@@ -30,14 +30,27 @@ const App = () => {
       .update(existingPerson.id, newPerson)
       .then((updatedPerson) => {
         setPersons((currentPersons) =>
-          currentPersons.map((p) => (p.id === updatedPerson.id ? updatedPerson : p)),
+          currentPersons.map((p) =>
+            p.id === updatedPerson.id ? updatedPerson : p,
+          ),
         );
+        showFeedback(`${updatedPerson.name} succesfully updated`)
       })
       .catch((e) => {
-        showFeedback(
-          `${existingPerson.name} already removed - ${e.response?.data?.error ?? e.message}`,
-          ERR,
-        );
+        const status = e.response?.status;
+        const error = e.response?.data?.error ?? e.message;
+        if (status === 404) {
+          showFeedback(
+            `${existingPerson.name} already removed - ${e.response?.data?.error ?? e.message}`,
+            ERR,
+          );
+
+          setPersons((currentPersons) =>
+            currentPersons.filter((p) => p.id !== existingPerson.id),
+          );
+        } else {
+          showFeedback(error, ERR);
+        }
       });
 
     setNewName('');
@@ -66,12 +79,16 @@ const App = () => {
 
     personService
       .create(newPerson)
-      .then((np) => setPersons((currentPersons) => currentPersons.concat(np)));
+      .then((np) => {
+        setPersons((currentPersons) => currentPersons.concat(np));
+        showFeedback(`${newName} added`, SUCCESS);
+      })
+      .catch((e) => {
+        showFeedback(e.response.data.error, ERR);
+      });
 
     setNewName('');
     setNewNumber('');
-
-    showFeedback(`${newName} added`, SUCCESS);
   };
 
   const showFeedback = (msg, type) => {

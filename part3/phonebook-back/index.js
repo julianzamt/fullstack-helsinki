@@ -41,36 +41,42 @@ app.delete('/api/persons/:id', (req, res) => {
   Person.findByIdAndDelete(req.params.id).then(() => res.status(204).end());
 });
 
-app.post('/api/persons', (req, res) => {
+app.post('/api/persons', (req, res, next) => {
   const body = req.body;
 
-  if (!body.name || !body.number)
-    return res.status(400).json({
-      error: 'content missing',
-    });
+  // if (!body.name || !body.number)
+  //   return res.status(400).json({
+  //     error: 'content missing',
+  //   });
 
   const newPerson = new Person({
     name: body.name,
     number: body.number,
   });
 
-  newPerson.save().then((p) => res.json(p));
+  newPerson
+    .save()
+    .then((p) => res.json(p))
+    .catch((e) => next(e));
 });
 
 app.put('/api/persons/:id', (req, res, next) => {
-  const p = Person.findById(req.params.id)
+  Person.findById(req.params.id)
     .then((p) => {
       if (p) {
         const body = req.body;
 
-        if (!body.number)
-          return res.status(400).json({
-            error: 'content missing',
-          });
+        // if (!body.number)
+        //   return res.status(400).json({
+        //     error: 'content missing',
+        //   });
 
         p.number = body.number;
 
-        return p.save().then((updatedP) => res.json(updatedP));
+        return p
+          .save()
+          .then((updatedP) => res.json(updatedP))
+          .catch((e) => next(e));
       } else {
         res.status(404).end();
       }
@@ -97,6 +103,8 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' });
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message });
   }
 
   next(error);
