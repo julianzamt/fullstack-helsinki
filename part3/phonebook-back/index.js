@@ -22,7 +22,7 @@ app.use(
 );
 
 app.get('/api/persons', (req, res) => {
-  Person.find({}).then((persons) => res.json(persons));
+  return Person.find({}).then((persons) => res.json(persons));
 });
 
 app.get('/api/persons/:id', (req, res, next) => {
@@ -38,7 +38,7 @@ app.get('/api/persons/:id', (req, res, next) => {
 });
 
 app.delete('/api/persons/:id', (req, res) => {
-  Person.findByIdAndDelete(req.params.id).then(() => res.status(204).end());
+  return Person.findByIdAndDelete(req.params.id).then(() => res.status(204).end());
 });
 
 app.post('/api/persons', (req, res, next) => {
@@ -75,7 +75,7 @@ app.put('/api/persons/:id', (req, res, next) => {
 });
 
 app.get('/info', (req, res) => {
-  Person.countDocuments({}).then((count) =>
+  return Person.countDocuments({}).then((count) =>
     res.send(
       `<h1> Phonebook has info for ${count} persons</h1> <h2>${new Date()}</h2>`,
     ),
