@@ -93,7 +93,7 @@ const App = () => {
 
   const showFeedback = (msg, type) => {
     setFeedback({ msg, type });
-    setTimeout(() => setFeedback(null), 3000);
+    setTimeout(() => setFeedback(null), 5000);
   };
 
   const handleFilter = (e) => {

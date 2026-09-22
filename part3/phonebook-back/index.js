@@ -44,11 +44,6 @@ app.delete('/api/persons/:id', (req, res) => {
 app.post('/api/persons', (req, res, next) => {
   const body = req.body;
 
-  // if (!body.name || !body.number)
-  //   return res.status(400).json({
-  //     error: 'content missing',
-  //   });
-
   const newPerson = new Person({
     name: body.name,
     number: body.number,
@@ -65,11 +60,6 @@ app.put('/api/persons/:id', (req, res, next) => {
     .then((p) => {
       if (p) {
         const body = req.body;
-
-        // if (!body.number)
-        //   return res.status(400).json({
-        //     error: 'content missing',
-        //   });
 
         p.number = body.number;
 
