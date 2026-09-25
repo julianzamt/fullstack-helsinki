@@ -1,17 +1,4 @@
 const mongoose = require('mongoose');
-process.loadEnvFile();
-
-const DB_USERNAME = process.env.MONGODB_USERNAME;
-const DB_PASSWORD = process.env.MONGODB_PASSWORD;
-
-const url = `mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@cluster0.pqdbj7k.mongodb.net/phonebook?appName=Cluster0`;
-
-mongoose.set('strictQuery', false);
-
-mongoose
-  .connect(url, { family: 4 })
-  .then(() => console.log('Connected to MongoDB'))
-  .catch((e) => console.error(`Error connecting to MongoDB: ${e.message}`));
 
 const personSchema = new mongoose.Schema({
   name: {
