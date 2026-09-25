@@ -1,5 +1,5 @@
 const personsRouter = require('express').Router();
-const Person = require('../models/note');
+const Person = require('../models/person');
 
 personsRouter.get('/', (req, res) => {
   return Person.find({}).then((persons) => res.json(persons));

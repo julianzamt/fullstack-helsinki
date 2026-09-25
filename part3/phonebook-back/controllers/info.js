@@ -1,5 +1,5 @@
 const infoRouter = require('express').Router();
-const Person = require('../models/note');
+const Person = require('../models/person');
 
 infoRouter.get('/info', (req, res) => {
   return Person.countDocuments({}).then((count) =>

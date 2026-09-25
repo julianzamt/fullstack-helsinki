@@ -33,7 +33,7 @@ app.use(
   }),
 );
 
-app.use('/api/notes', personsRouter);
+app.use('/api/persons', personsRouter);
 app.use('/info', infoRouter);
 
 app.use(middleware.unknownEndpoint);
