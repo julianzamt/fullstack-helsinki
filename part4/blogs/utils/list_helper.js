@@ -34,8 +34,29 @@ const mostBlogs = (blogs) => {
   return res;
 };
 
+const mostLikes = (blogs) => {
+  const counts = new Map();
+  blogs.forEach((b) =>
+    counts.set(b.author, (counts.get(b.author) || 0) + b.likes),
+  );
+
+  let res = null;
+
+  for (const [author, count] of counts.entries()) {
+    if (res === null || count > res.likes) {
+      res = {
+        author,
+        likes: count,
+      };
+    }
+  }
+
+  return res;
+};
+
 module.exports = {
   totalLikes,
   favoriteBlog,
   mostBlogs,
+  mostLikes,
 };
