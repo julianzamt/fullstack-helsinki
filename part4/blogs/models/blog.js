@@ -1,9 +1,20 @@
 const mongoose = require('mongoose');
 
 const blogSchema = mongoose.Schema({
-  title: String,
-  author: String,
-  url: String,
+  title: {
+    type: String,
+    required: true,
+    maxLength: 20,
+  },
+  author: {
+    type: String,
+    maxLength: 50,
+  },
+  url: {
+    type: String,
+    required: true,
+    maxLength: 100,
+  },
   likes: Number,
 });
 
