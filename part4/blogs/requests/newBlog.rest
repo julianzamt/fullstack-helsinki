@@ -2,7 +2,7 @@ POST http://localhost:3003/
 Content-Type: application/json
 
 {
-    "title": "La vida de Brian",
-    "author": "Juan Carlos",
-    "url": "www.test.test"
+    "title": "Makcro",
+    "author": "Pepe",
+    "url": "www.pepe.test"
 }

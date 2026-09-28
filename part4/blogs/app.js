@@ -15,22 +15,25 @@ mongoose
   .catch((e) => logger.error(`Error connecting to MongoDB: ${e.message}`));
 
 app.use(express.json());
-app.use(
-  morgan((tokens, req, res) => {
-    return [
-      tokens.method(req, res),
-      tokens.url(req, res),
-      tokens.status(req, res),
-      tokens.res(req, res, 'content-length'),
-      '-',
-      tokens['response-time'](req, res),
-      'ms',
-      JSON.stringify(req.body),
-    ].join(' ');
-  }),
-);
 
-app.use('/', blogsRouter);
+if (process.env.NODE_ENV !== 'test') {
+  app.use(
+    morgan((tokens, req, res) => {
+      return [
+        tokens.method(req, res),
+        tokens.url(req, res),
+        tokens.status(req, res),
+        tokens.res(req, res, 'content-length'),
+        '-',
+        tokens['response-time'](req, res),
+        'ms',
+        JSON.stringify(req.body),
+      ].join(' ');
+    }),
+  );
+}
+
+app.use('/api/blogs', blogsRouter);
 
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);

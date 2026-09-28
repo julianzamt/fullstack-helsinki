@@ -15,7 +15,10 @@ const blogSchema = mongoose.Schema({
     required: true,
     maxLength: 100,
   },
-  likes: Number,
+  likes: {
+    type: Number,
+    default: 0,
+  },
 });
 
 blogSchema.set('toJSON', {
@@ -26,6 +29,9 @@ blogSchema.set('toJSON', {
   },
 });
 
-const Blog = mongoose.model('Blog', blogSchema);
+let testCollection =
+  process.env.NODE_ENV === 'test' ? 'blogs-tests' : undefined;
+
+const Blog = mongoose.model('Blog', blogSchema, testCollection);
 
 module.exports = Blog;
