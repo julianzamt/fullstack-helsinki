@@ -97,6 +97,20 @@ describe('blogs-api', () => {
 
     await api.post('/api/blogs/').send(newBlog).expect(400);
   });
+
+  test('deletes a resource correctly', async () => {
+    const blogsAtStart = await helpers.blogsInDb();
+    const blogToDelete = blogsAtStart[0];
+
+    await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
+
+    const blogsAtEnd = await helpers.blogsInDb();
+
+    const ids = blogsAtEnd.map((n) => n.id);
+    assert(!ids.includes(blogToDelete.id));
+
+    assert.strictEqual(blogsAtEnd.length, helpers.initialBlogs.length - 1);
+  });
 });
 
 after(async () => {
