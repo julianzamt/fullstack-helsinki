@@ -10,6 +10,12 @@ usersRouter.get('/', async (req, res) => {
 usersRouter.post('/', async (req, res) => {
   const body = req.body;
 
+  if (!body.password)
+    return res.status(400).json({ error: 'password is required' });
+
+  if (body.password.length < 3)
+    return res.status(400).json({ error: 'password too short' });
+
   const newUser = new User({
     username: body.username,
     name: body.name,
