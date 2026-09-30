@@ -1,0 +1,9 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imp1bGkiLCJpZCI6IjZhYmQzMzZkYjA3YjZkYTEzZGY3NGYzOCIsImlhdCI6MTc5MDc4NzI4MX0.tTIcOUgfFjfxn0H7o9uIY1HqC0DEgk7gTU6WvlVFj9g
+
+{
+    "title": "Makcro",
+    "author": "Pepe",
+    "url": "www.pepe.test"
+}
