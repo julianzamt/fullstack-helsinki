@@ -8,8 +8,6 @@ loginRouter.post('/', async (req, res) => {
 
   const user = await User.findOne({ username });
 
-  console.log({ user });
-
   const passwordCorrect =
     user === null ? false : await bcrypt.compare(password, user.password);
 
@@ -28,9 +26,7 @@ loginRouter.post('/', async (req, res) => {
     expiresIn: 60 * 60,
   });
 
-  res
-    .status(200)
-    .send({ token, username: user.username, name: user.name });
+  res.status(200).send({ token, username: user.username, name: user.name });
 });
 
 module.exports = loginRouter;
