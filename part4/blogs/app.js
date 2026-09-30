@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const logger = require('./utils/logger');
 const config = require('./utils/config');
 const blogsRouter = require('./controllers/blogs');
+const usersRouter = require('./controllers/users');
 const middleware = require('./utils/middleware');
 
 const app = express();
@@ -27,13 +28,13 @@ if (process.env.NODE_ENV !== 'test') {
         '-',
         tokens['response-time'](req, res),
         'ms',
-        JSON.stringify(req.body),
       ].join(' ');
     }),
   );
 }
 
 app.use('/api/blogs', blogsRouter);
+app.use('/api/users', usersRouter);
 
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
