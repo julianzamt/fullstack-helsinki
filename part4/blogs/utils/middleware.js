@@ -27,8 +27,18 @@ const errorHandler = (error, request, response, next) => {
       error: 'token expired',
     });
   }
-  
+
   next(error);
 };
 
-module.exports = { unknownEndpoint, errorHandler };
+const tokenExtractor = (req, res, next) => {
+  const authorization = req.get('authorization');
+  req["token"] =
+    authorization && authorization.startsWith('Bearer ')
+      ? authorization.replace('Bearer ', '')
+      : undefined;
+
+  next();
+};
+
+module.exports = { unknownEndpoint, errorHandler, tokenExtractor };
