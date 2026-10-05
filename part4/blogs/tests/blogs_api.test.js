@@ -5,12 +5,43 @@ const supertest = require('supertest');
 const Blog = require('../models/blog');
 const app = require('../app');
 const helpers = require('./test_helpers');
+const User = require('../models/user');
+const bcrypt = require('bcrypt');
 
 const api = supertest(app);
 
+let rickyToken = '';
+
 beforeEach(async () => {
   await Blog.deleteMany({});
-  await Blog.insertMany(helpers.initialBlogs);
+  await User.deleteMany({});
+
+  const users = await Promise.all(
+    helpers.initialUsers.map(async (user) => ({
+      ...user,
+      password: await bcrypt.hash(user.password, 10),
+    })),
+  );
+
+  const savedUsers = await User.insertMany(users);
+  const ricky = savedUsers.find((user) => user.username === 'ricky');
+
+  const blogs = await Blog.insertMany(
+    helpers.initialBlogs.map((blog) => ({
+      ...blog,
+      user: ricky._id,
+    })),
+  );
+
+  ricky.blogs = blogs.map((blog) => blog._id);
+  await ricky.save();
+
+  const res = await api
+    .post('/api/login/')
+    .send({ username: 'ricky', password: 'pupi' })
+    .expect(200);
+
+  rickyToken = res.body.token;
 });
 
 describe('blogs-api', () => {
@@ -50,6 +81,7 @@ describe('blogs-api', () => {
     };
     await api
       .post('/api/blogs/')
+      .set('Authorization', `Bearer ${rickyToken}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/);
@@ -71,6 +103,7 @@ describe('blogs-api', () => {
     };
     await api
       .post('/api/blogs/')
+      .set('Authorization', `Bearer ${rickyToken}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/);
@@ -82,27 +115,38 @@ describe('blogs-api', () => {
     assert.strictEqual(b.likes, 0);
   });
 
-  test('title/url are required', async () => {
+  test('title and url are required fields', async () => {
     let newBlog = {
       author: 'Rubén Paz',
       url: 'www.test.caca',
     };
 
-    await api.post('/api/blogs/').send(newBlog).expect(400);
+    await api
+      .post('/api/blogs/')
+      .set('Authorization', `Bearer ${rickyToken}`)
+      .send(newBlog)
+      .expect(400);
 
     newBlog = {
       title: 'La vida es buena',
       author: 'Rubén Paz',
     };
 
-    await api.post('/api/blogs/').send(newBlog).expect(400);
+    await api
+      .post('/api/blogs/')
+      .set('Authorization', `Bearer ${rickyToken}`)
+      .send(newBlog)
+      .expect(400);
   });
 
   test('deletes a resource correctly', async () => {
     const blogsAtStart = await helpers.blogsInDb();
     const blogToDelete = blogsAtStart[0];
 
-    await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('Authorization', `Bearer ${rickyToken}`)
+      .expect(204);
 
     const blogsAtEnd = await helpers.blogsInDb();
 

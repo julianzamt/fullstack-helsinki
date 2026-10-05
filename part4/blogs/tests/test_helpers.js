@@ -3,15 +3,15 @@ const Blog = require('../models/blog');
 const initialBlogs = [
   {
     title: 'La vida de Brian',
-    author: 'Jorge Falsete',
+    author: 'Ricardo Rubén',
     url: 'www.test.test',
-    like: 10,
+    likes: 10,
   },
   {
     title: 'Carcaboy',
     author: 'Juan Pérez',
     url: 'www.test.com',
-    like: 17,
+    likes: 17,
   },
 ];
 
@@ -20,6 +20,11 @@ const initialUsers = [
     username: 'ricky',
     name: 'Ricardo Rubén',
     password: 'pupi',
+  },
+  {
+    username: 'rama',
+    name: 'Ramoncito',
+    password: 'kitty',
   },
 ];
 
