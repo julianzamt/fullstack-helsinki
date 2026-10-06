@@ -1,78 +1,110 @@
 import { useState, useEffect } from 'react';
-import Blog from './components/Blog';
+import BlogList from './components/BlogList';
+import BlogForm from './components/BlogForm';
+import UserInfo from './components/UserInfo';
 import blogService from './services/blogs';
 import loginService from './services/login';
+import Login from './components/Login';
+import Feedback from './components/Feedback';
+import { ERR, SUCCESS } from './constants';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
+  const [feedback, setFeedback] = useState(null);
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
+    const loadBlogs = async () => {
+      try {
+        const blogs = await blogService.getAll();
+        setBlogs(blogs);
+      } catch {
+        setFeedback({
+          text: 'Could not load blogs. Please try refreshing the page.',
+          type: ERR,
+        });
+      }
+    };
+
+    loadBlogs();
   }, []);
 
   useEffect(() => {
     const user = window.localStorage.getItem('user');
-    if (user) setUser(JSON.parse(user));
+    if (user) {
+      const parsedUser = JSON.parse(user);
+      setUser(parsedUser);
+      blogService.setToken(parsedUser.token);
+    }
   }, []);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    const user = await loginService.login({ username, password });
+  const handleLogin = async ({ username, password }) => {
+    try {
+      const user = await loginService.login({ username, password });
 
-    window.localStorage.setItem('user', JSON.stringify(user));
-    setUser(user);
-    setUsername('');
-    setPassword('');
+      window.localStorage.setItem('user', JSON.stringify(user));
+      blogService.setToken(user.token);
+      setUser(user);
+
+      feedbackSetter(`Login succesful`, SUCCESS);
+      return true;
+    } catch (error) {
+      feedbackSetter(
+        error.response?.status === 401
+          ? 'Wrong username or password'
+          : 'Could not log in. Please try again.',
+        ERR,
+      );
+      return false;
+    }
   };
 
   const handleLogout = () => {
-    window.localStorage.setItem('user', null);
+    window.localStorage.removeItem('user');
+    blogService.setToken(null);
     setUser(null);
+
+    feedbackSetter(`User logged out succesfully`, SUCCESS);
   };
 
-  const login = (
-    <div>
-      <h2>Login</h2>
-      <form onSubmit={handleLogin}>
-        <label>
-          username
-          <input
-            value={username}
-            onChange={({ target }) => setUsername(target.value)}
-          ></input>
-        </label>
-        <label>
-          password
-          <input
-            value={password}
-            onChange={({ target }) => setPassword(target.value)}
-          ></input>
-        </label>
-        <br></br>
-        <button>Login</button>
-      </form>
-    </div>
-  );
+  const createBlog = async (newBlogData) => {
+    try {
+      const newBlog = await blogService.create(newBlogData);
+      setBlogs((current) => current.concat(newBlog));
 
-  const blogsBlock = (
-    <div>
-      <h2>blogs</h2>
-      {user?.name} is logged in
-      <br></br>
-      <br></br>
-      {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} />
-      ))}
-      <button onClick={handleLogout}>Logout</button>
-    </div>
-  );
+      feedbackSetter(`${newBlogData.title} created succesfully`, SUCCESS);
+      return true;
+    } catch {
+      feedbackSetter('Could not create the blog. Please try again.', ERR);
+      return false;
+    }
+  };
+
+  const feedbackSetter = (text, type) => {
+    setFeedback({
+      text,
+      type,
+    });
+
+    setTimeout(() => {
+      setFeedback(null);
+    }, 3000);
+  };
 
   return (
     <>
-      {!user && login} {user && blogsBlock}
+      {feedback && <Feedback feedback={feedback} />}
+      {!user && <Login onLogin={handleLogin} />}
+      {user && (
+        <div>
+          <h2>Blogs</h2>
+          <UserInfo user={user} onLogout={handleLogout} />
+          <br></br>
+          <BlogList blogs={blogs} />
+          <br></br>
+          <BlogForm createBlog={createBlog} />
+        </div>
+      )}
     </>
   );
 };
