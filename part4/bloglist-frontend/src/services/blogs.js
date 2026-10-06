@@ -4,7 +4,7 @@ const baseUrl = `${import.meta.env.VITE_API_URL}/api/blogs`;
 let token = null;
 
 const setToken = (newToken) => {
-  token = `Bearer ${newToken}`;
+  token = newToken ? `Bearer ${newToken}` : null;
 };
 
 const getAll = async () => {
@@ -14,9 +14,8 @@ const getAll = async () => {
 
 const create = async (newBlog) => {
   const config = {
-    headers: { Authorization: token },
+    headers: token ? { Authorization: token } : {},
   };
-  console.log({ config });
   const res = await axios.post(baseUrl, newBlog, config);
   return res.data;
 };

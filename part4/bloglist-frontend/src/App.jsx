@@ -30,11 +30,22 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    const user = window.localStorage.getItem('user');
-    if (user) {
-      const parsedUser = JSON.parse(user);
+    const storedUser = window.localStorage.getItem('user');
+    if (!storedUser) return;
+
+    try {
+      const parsedUser = JSON.parse(storedUser);
+      if (typeof parsedUser?.token !== 'string' || !parsedUser.token.trim()) {
+        window.localStorage.removeItem('user');
+        blogService.setToken(null);
+        return;
+      }
+
       setUser(parsedUser);
       blogService.setToken(parsedUser.token);
+    } catch {
+      window.localStorage.removeItem('user');
+      blogService.setToken(null);
     }
   }, []);
 
