@@ -2,6 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const logger = require('./utils/logger');
+const cors = require('cors');
 const config = require('./utils/config');
 const blogsRouter = require('./controllers/blogs');
 const usersRouter = require('./controllers/users');
@@ -9,6 +10,7 @@ const loginRouter = require('./controllers/login');
 const middleware = require('./utils/middleware');
 
 const app = express();
+app.use(cors());
 
 logger.info('Connecting to MongoDB...');
 mongoose
