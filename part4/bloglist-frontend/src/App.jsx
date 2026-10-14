@@ -107,6 +107,29 @@ const App = () => {
     }, 3000);
   };
 
+  const likeBlog = async (blog) => {
+    try {
+      const updated = await blogService.like(blog.id, {
+        likes: blog.likes + 1,
+      });
+
+      setBlogs((current) =>
+        current.map((b) =>
+          b.id === blog.id ? { ...b, likes: updated.likes } : b,
+        ),
+      );
+    } catch (error) {
+      console.error('Failed to like blog:', error);
+
+      feedbackSetter(
+        error.response?.status === 404
+          ? 'This blog no longer exists. Please refresh the list.'
+          : 'Could not like the blog. Please try again.',
+        ERR,
+      );
+    }
+  };
+
   return (
     <>
       {feedback && <Feedback feedback={feedback} />}
@@ -116,7 +139,7 @@ const App = () => {
           <h2>Blogs</h2>
           <UserInfo user={user} onLogout={handleLogout} />
           <br></br>
-          <BlogList blogs={blogs} />
+          <BlogList blogs={blogs} likeBlog={likeBlog} />
           <br></br>
           <Togglable buttonLabel={'Add new blog'} ref={blogFormToggleRef}>
             <BlogForm createBlog={createBlog} />
