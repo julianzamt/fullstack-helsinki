@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import BlogList from './components/BlogList';
 import BlogForm from './components/BlogForm';
 import UserInfo from './components/UserInfo';
@@ -6,12 +6,15 @@ import blogService from './services/blogs';
 import loginService from './services/login';
 import Login from './components/Login';
 import Feedback from './components/Feedback';
+import Togglable from './components/Togglable';
 import { ERR, SUCCESS } from './constants';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
   const [feedback, setFeedback] = useState(null);
+
+  const blogFormToggleRef = useRef();
 
   useEffect(() => {
     const loadBlogs = async () => {
@@ -84,6 +87,8 @@ const App = () => {
       setBlogs((current) => current.concat(newBlog));
 
       feedbackSetter(`${newBlogData.title} created succesfully`, SUCCESS);
+
+      blogFormToggleRef.current.toggleVisibility();
       return true;
     } catch {
       feedbackSetter('Could not create the blog. Please try again.', ERR);
@@ -113,7 +118,9 @@ const App = () => {
           <br></br>
           <BlogList blogs={blogs} />
           <br></br>
-          <BlogForm createBlog={createBlog} />
+          <Togglable buttonLabel={'Add new blog'} ref={blogFormToggleRef}>
+            <BlogForm createBlog={createBlog} />
+          </Togglable>
         </div>
       )}
     </>
