@@ -20,7 +20,7 @@ const App = () => {
     const loadBlogs = async () => {
       try {
         const blogs = await blogService.getAll();
-        setBlogs(blogs);
+        setBlogs(blogs.sort((a, b) => b.likes - a.likes));
       } catch {
         setFeedback({
           text: 'Could not load blogs. Please try refreshing the page.',
@@ -114,9 +114,9 @@ const App = () => {
       });
 
       setBlogs((current) =>
-        current.map((b) =>
-          b.id === blog.id ? { ...b, likes: updated.likes } : b,
-        ),
+        current
+          .map((b) => (b.id === blog.id ? { ...b, likes: updated.likes } : b))
+          .sort((a, b) => b.likes - a.likes),
       );
     } catch (error) {
       console.error('Failed to like blog:', error);
