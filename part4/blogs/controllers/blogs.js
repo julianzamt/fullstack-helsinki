@@ -24,6 +24,8 @@ blogsRouter.post('/', userExtractor, async (req, res) => {
   user.blogs = user.blogs.concat(nb._id);
   await user.save();
 
+  await nb.populate('user', { username: 1, name: 1 });
+
   return res.status(201).json(nb);
 });
 
