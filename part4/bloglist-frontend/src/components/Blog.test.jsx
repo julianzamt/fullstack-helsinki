@@ -15,8 +15,10 @@ const blog = {
 
 const user = userEvent.setup();
 
+const mockHandler = vi.fn();
+
 beforeEach(() => {
-  render(<Blog blog={blog} user={blog.user} />);
+  render(<Blog blog={blog} user={blog.user} likeBlog={mockHandler} />);
 });
 
 test('renders a blog with hidden details by default', () => {
@@ -33,4 +35,13 @@ test('a blog url and likes are shown when show details is clicked', async () => 
   expect(screen.getByText(blog.url)).toBeVisible();
   expect(screen.getByText(String(blog.likes))).toBeVisible();
   expect(screen.getByText(blog.user.name)).toBeVisible();
+});
+
+test('clicking twice on the like button calls its eventHandler twice', async () => {
+  const button = screen.getByText('Like');
+
+  await user.click(button);
+  await user.click(button);
+
+  expect(mockHandler.mock.calls).toHaveLength(2);
 });
