@@ -151,11 +151,12 @@ const App = () => {
 
   return (
     <>
+      <h1>Blogs</h1>
+      <hr />
       {feedback && <Feedback feedback={feedback} />}
       {!user && <Login onLogin={handleLogin} />}
       {user && (
         <div>
-          <h2>Blogs</h2>
           <UserInfo user={user} onLogout={handleLogout} />
           <br></br>
           <BlogList
