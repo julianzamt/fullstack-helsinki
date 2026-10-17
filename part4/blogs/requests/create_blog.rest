@@ -1,9 +1,0 @@
-POST http://localhost:3003/api/blogs
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hcmNvcyIsImlkIjoiNmFiZDQxMzE0ZTBiMTg3NmY3NTg4NGY0IiwiaWF0IjoxNzkwNzg4MDEwLCJleHAiOjE3OTA3OTE2MTB9.fEr3kihbYBh2tjuzIYjX3d2gB2I4P76cAvIN-8jzuYQ
-
-{
-    "title": "Hola",
-    "author": "Mundo",
-    "url": "www.mundo.test"
-}
