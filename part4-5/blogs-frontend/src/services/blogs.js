@@ -21,7 +21,10 @@ const create = async (newBlog) => {
 };
 
 const like = async (id, blog) => {
-  const res = await axios.put(`${baseUrl}/${id}`, blog);
+  const config = {
+    headers: token ? { Authorization: token } : {},
+  };
+  const res = await axios.put(`${baseUrl}/${id}`, blog, config);
   return res.data;
 };
 

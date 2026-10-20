@@ -1,7 +1,7 @@
 const UserInfo = ({ user, onLogout }) => (
-  <div>
+  <span style={{ textAlign: 'right' }}>
     {user.name} is logged in <button onClick={onLogout}>Logout</button>
-  </div>
+  </span>
 );
 
 export default UserInfo;

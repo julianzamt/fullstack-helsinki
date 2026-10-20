@@ -4,7 +4,7 @@ const blogSchema = mongoose.Schema({
   title: {
     type: String,
     required: true,
-    maxLength: 20,
+    maxLength: 100,
   },
   author: {
     type: String,

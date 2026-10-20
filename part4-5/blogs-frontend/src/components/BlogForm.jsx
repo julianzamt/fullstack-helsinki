@@ -18,7 +18,7 @@ const BlogForm = ({ createBlog }) => {
 
   return (
     <>
-      <h2>Create New</h2>
+      <h2>Add new blog</h2>
       <form onSubmit={handleSubmit}>
         <label>
           title
@@ -42,7 +42,7 @@ const BlogForm = ({ createBlog }) => {
           ></input>
         </label>
         <br></br>
-        <button>Submit</button>
+        <button style={{ margin: 5 }}>Submit</button>
       </form>
     </>
   );

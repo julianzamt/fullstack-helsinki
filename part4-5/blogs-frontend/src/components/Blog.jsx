@@ -1,41 +1,33 @@
-import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 
-const Blog = ({ blog, likeBlog, user, deleteBlog }) => {
-  const [showDetails, setShowDetails] = useState(false);
+const Blog = ({ blogs, likeBlog, user, deleteBlog }) => {
+  const id = useParams().id;
 
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5,
-  };
+  const blog = blogs.find((b) => b.id === id);
+
+  if (!blog) return null;
 
   return (
-    <div style={blogStyle} data-testid="blog">
-      {blog.title} {blog.author}
-      <br></br>
+    <div>
+      <h1>
+        {blog.author}: {blog.title}
+      </h1>
+      <p>{blog.url}</p>
+      <p data-testid="blog-likes">
+        {blog.likes}{' '}
+        {user && <button onClick={() => likeBlog(blog)}>Like</button>}
+        {!user && <span> Likes </span>}
+      </p>
+      <p>{blog.user.name}</p>
       <button
         onClick={() => deleteBlog(blog)}
-        style={{ display: user.id === blog.user.id ? '' : 'none' }}
+        style={{
+          display: user?.id === blog.user.id ? '' : 'none',
+          margin: 5,
+        }}
       >
         Delete
       </button>
-      <br></br>
-      <button
-        style={{ display: showDetails ? 'none' : '' }}
-        onClick={() => setShowDetails(true)}
-      >
-        Show details
-      </button>
-      <div style={{ display: showDetails ? '' : 'none' }}>
-        <p>{blog.url}</p>
-        <p data-testid="blog-likes">
-          {blog.likes} <button onClick={() => likeBlog(blog)}>Like</button>
-        </p>
-        <p>{blog.user.name}</p>
-        <button onClick={() => setShowDetails(false)}>Hide details</button>
-      </div>
     </div>
   );
 };

@@ -1,20 +1,25 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import BlogList from './components/BlogList';
+import Blog from './components/Blog';
 import BlogForm from './components/BlogForm';
 import UserInfo from './components/UserInfo';
 import blogService from './services/blogs';
 import loginService from './services/login';
 import Login from './components/Login';
 import Feedback from './components/Feedback';
-import Togglable from './components/Togglable';
 import { ERR, SUCCESS } from './constants';
+import { Routes, Route, Link, useNavigate } from 'react-router-dom';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
   const [feedback, setFeedback] = useState(null);
 
-  const blogFormToggleRef = useRef();
+  const navigate = useNavigate();
+
+  const padding = {
+    padding: 5,
+  };
 
   useEffect(() => {
     const loadBlogs = async () => {
@@ -88,7 +93,8 @@ const App = () => {
 
       feedbackSetter(`${newBlogData.title} created succesfully`, SUCCESS);
 
-      blogFormToggleRef.current.toggleVisibility();
+      navigate('/');
+
       return true;
     } catch {
       feedbackSetter('Could not create the blog. Please try again.', ERR);
@@ -136,6 +142,8 @@ const App = () => {
         await blogService.deleteBlog(blog.id);
 
         setBlogs((current) => current.filter((b) => b.id !== blog.id));
+
+        navigate('/');
       } catch (error) {
         console.error('Failed to delete blog:', error);
 
@@ -152,25 +160,51 @@ const App = () => {
   return (
     <>
       <h1>Blogs</h1>
+      <div>
+        <Link style={padding} to="/">
+          Home
+        </Link>
+        {!user && (
+          <Link style={padding} to="/login">
+            Login
+          </Link>
+        )}
+        {user && (
+          <Link style={padding} to="/create">
+            Add Blog
+          </Link>
+        )}
+        {user && <UserInfo user={user} onLogout={handleLogout} />}
+      </div>
       <hr />
       {feedback && <Feedback feedback={feedback} />}
-      {!user && <Login onLogin={handleLogin} />}
-      {user && (
-        <div>
-          <UserInfo user={user} onLogout={handleLogout} />
-          <br></br>
-          <BlogList
-            blogs={blogs}
-            likeBlog={likeBlog}
-            user={user}
-            deleteBlog={deleteBlog}
-          />
-          <br></br>
-          <Togglable buttonLabel={'Add new blog'} ref={blogFormToggleRef}>
-            <BlogForm createBlog={createBlog} />
-          </Togglable>
-        </div>
-      )}
+
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <BlogList
+              blogs={blogs}
+              likeBlog={likeBlog}
+              user={user}
+              deleteBlog={deleteBlog}
+            />
+          }
+        />
+        <Route path="/create" element={<BlogForm createBlog={createBlog} />} />
+        <Route path="/login" element={<Login onLogin={handleLogin} />}></Route>
+        <Route
+          path="/blogs/:id"
+          element={
+            <Blog
+              blogs={blogs}
+              likeBlog={likeBlog}
+              user={user}
+              deleteBlog={deleteBlog}
+            />
+          }
+        />
+      </Routes>
     </>
   );
 };
