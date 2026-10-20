@@ -8,7 +8,7 @@ import loginService from './services/login';
 import Login from './components/Login';
 import Feedback from './components/Feedback';
 import { ERR, SUCCESS } from './constants';
-import { Routes, Route, Link, useNavigate } from 'react-router-dom';
+import { Routes, Route, Link, useNavigate, useMatch } from 'react-router-dom';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -16,6 +16,8 @@ const App = () => {
   const [feedback, setFeedback] = useState(null);
 
   const navigate = useNavigate();
+  const match = useMatch('/blogs/:id');
+  const blog = match ? blogs.find((b) => b.id === match.params.id) : null;
 
   const padding = {
     padding: 5,
@@ -197,7 +199,7 @@ const App = () => {
           path="/blogs/:id"
           element={
             <Blog
-              blogs={blogs}
+              blog={blog}
               likeBlog={likeBlog}
               user={user}
               deleteBlog={deleteBlog}
