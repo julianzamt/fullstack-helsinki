@@ -1,11 +1,11 @@
 const { test, describe, expect, beforeEach } = require('@playwright/test');
 const { loginWith, addBlog, likeBlog } = require('./helpers');
-const { default: playwrightConfig } = require('../playwright.config');
 
 describe('Blogs app', () => {
   beforeEach(async ({ page, request }) => {
-    await request.post('/api/testing/reset');
-    await request.post('/api/users', {
+    const reset = await request.post('/api/testing/reset');
+    expect(reset.ok()).toBeTruthy();
+    const createdUser = await request.post('/api/users', {
       data: {
         name: 'Juan',
         username: 'juan',
@@ -13,6 +13,7 @@ describe('Blogs app', () => {
       },
     });
 
+    expect(createdUser.ok()).toBeTruthy();
     await page.goto('/');
   });
 
@@ -46,10 +47,26 @@ describe('Blogs app', () => {
     describe('...and a blog is added', async () => {
       beforeEach(async ({ page }) => {
         await addBlog(page, 'a blog test', 'playwright', 'www.playwright.com');
+        await page.getByRole('link', { name: 'a blog test playwright', exact: true }).click();
+      });
+
+      test('unauthenticated users see blog information and likes but no buttons', async ({ page }) => {
+        await page.getByRole('button', { name: 'Logout' }).click();
+        await expect(page.getByRole('heading', { name: 'playwright: a blog test' })).toBeVisible();
+        await expect(page.getByText('www.playwright.com', { exact: true })).toBeVisible();
+        await expect(page.getByText('Juan', { exact: true })).toBeVisible();
+        await expect(page.getByTestId('blog-likes')).toHaveText('0 Likes');
+        await expect(page.getByRole('button')).toHaveCount(0);
+      });
+
+      test('the creator sees both the like and delete buttons', async ({ page }) => {
+        await expect(page.getByRole('button', { name: 'Like', exact: true })).toBeVisible();
+        await expect(page.getByRole('button', { name: 'Delete', exact: true })).toBeVisible();
       });
 
       test('it can be liked', async ({ page }) => {
-        await likeBlog(page, 'a blog test', 1);
+        await page.getByRole('button', { name: 'Like', exact: true }).click();
+        await expect(page.getByTestId('blog-likes')).toHaveText('1 Like');
       });
 
       test('it can be deleted', async ({ page }) => {
@@ -60,9 +77,8 @@ describe('Blogs app', () => {
 
         await page.getByRole('button', { name: 'Delete' }).click();
 
-        await expect(
-          page.getByText('a blog test playwright'),
-        ).not.toBeVisible();
+        await expect(page).toHaveURL('http://localhost:5174/');
+        await expect(page.getByRole('link', { name: 'a blog test playwright', exact: true })).toHaveCount(0);
       });
 
       test('deletion can be cancelled', async ({ page }) => {
@@ -73,7 +89,7 @@ describe('Blogs app', () => {
 
         await page.getByRole('button', { name: 'Delete' }).click();
 
-        await expect(page.getByText('a blog test playwright')).toBeVisible();
+        await expect(page.getByRole('heading', { name: 'playwright: a blog test' })).toBeVisible();
       });
 
       test('other than the blog creator cannot see the delete button', async ({
@@ -90,8 +106,10 @@ describe('Blogs app', () => {
 
         await page.getByRole('button', { name: 'Logout' }).click();
         await loginWith(page, 'pepe', 'pepe');
-        await expect(page.getByText('a blog test playwright')).toBeVisible();
-        await expect(page.getByText('Delete')).not.toBeVisible();
+        await page.getByRole('link', { name: 'a blog test playwright', exact: true }).click();
+        await expect(page.getByRole('button', { name: 'Like', exact: true })).toBeVisible();
+        await expect(page.getByRole('button', { name: 'Delete' })).not.toBeVisible();
+        await expect(page.getByRole('button')).toHaveCount(2);
       });
     });
 
@@ -99,7 +117,7 @@ describe('Blogs app', () => {
       beforeEach(async ({ page }) => {
         test.setTimeout(30000);
 
-        const blogs = page.getByTestId('blog');
+        const blogs = page.getByRole('listitem');
         for (const title of ['First blog', 'Second blog', 'Third blog']) {
           await addBlog(page, title, 'playwright', 'https://playwright.dev');
           await expect(blogs.filter({ hasText: title })).toBeVisible();
@@ -107,7 +125,7 @@ describe('Blogs app', () => {
       });
 
       test('blogs are ordered by likes, most liked first', async ({ page }) => {
-        const blogs = page.getByTestId('blog');
+        const blogs = page.getByRole('listitem');
         await likeBlog(page, 'Second blog', 1);
         await likeBlog(page, 'Third blog', 2);
 

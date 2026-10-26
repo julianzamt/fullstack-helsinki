@@ -32,9 +32,6 @@ userSchema.set('toJSON', {
   },
 });
 
-const testCollection =
-  process.env.NODE_ENV === 'test' ? 'users-tests' : undefined;
-
-const User = mongoose.model('User', userSchema, testCollection);
+const User = mongoose.model('User', userSchema);
 
 module.exports = User;

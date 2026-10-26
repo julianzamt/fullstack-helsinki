@@ -14,21 +14,37 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
   testDir: './tests',
+  webServer: [
+    {
+      command: 'node index.js',
+      cwd: '../blogs-back',
+      env: { NODE_ENV: 'test', PORT: '3004' },
+      url: 'http://localhost:3004/api/blogs',
+      reuseExistingServer: false,
+    },
+    {
+      command: 'npm run dev -- --port 5174 --strictPort',
+      cwd: '../blogs-frontend',
+      env: { API_TARGET: 'http://localhost:3004', VITE_API_URL: '' },
+      url: 'http://localhost:5174',
+      reuseExistingServer: false,
+    },
+  ],
   /* Run tests in files in parallel */
   fullyParallel: false,
-  timeout: 4000,
+  timeout: 10000,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
   /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
+  workers: 1,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
-    baseURL: 'http://localhost:5173',
+    baseURL: 'http://localhost:5174',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',

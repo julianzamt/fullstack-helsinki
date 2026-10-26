@@ -13,35 +13,44 @@ const blog = {
   },
 };
 
-const user = userEvent.setup();
+test('unauthenticated users see blog information and likes but no buttons', () => {
+  render(<Blog blog={blog} user={null} />);
 
-const mockHandler = vi.fn();
-
-beforeEach(() => {
-  render(<Blog blog={blog} user={blog.user} likeBlog={mockHandler} />);
-});
-
-test('renders a blog with hidden details by default', () => {
   expect(screen.getByText(/Rich and happy/)).toBeVisible();
   expect(screen.getByText(/J\.L\. Curtis/)).toBeVisible();
-  expect(screen.getByText(blog.url)).not.toBeVisible();
-  expect(screen.getByText(String(blog.likes))).not.toBeVisible();
+  expect(screen.getByText(blog.url)).toBeVisible();
+  expect(screen.getByText(blog.user.name)).toBeVisible();
+  expect(screen.getByTestId('blog-likes')).toBeVisible();
+  expect(screen.getByTestId('blog-likes')).toHaveTextContent(/^0\s+Likes$/);
+  expect(screen.queryAllByRole('button')).toHaveLength(0);
 });
 
-test('a blog url and likes are shown when show details is clicked', async () => {
-  const button = screen.getByText('Show details');
-  await user.click(button);
+test('authenticated users who are not the creator see only the like button', () => {
+  render(<Blog blog={blog} user={{ id: '2', name: 'Another user' }} />);
 
-  expect(screen.getByText(blog.url)).toBeVisible();
-  expect(screen.getByText(String(blog.likes))).toBeVisible();
-  expect(screen.getByText(blog.user.name)).toBeVisible();
+  expect(screen.getByRole('button', { name: 'Like' })).toBeVisible();
+  expect(screen.queryByRole('button', { name: 'Delete' })).not.toBeInTheDocument();
+  expect(screen.getAllByRole('button')).toHaveLength(1);
+});
+
+test('the blog creator sees both the like and delete buttons', () => {
+  render(<Blog blog={blog} user={blog.user} />);
+
+  expect(screen.getByRole('button', { name: 'Like' })).toBeVisible();
+  expect(screen.getByRole('button', { name: 'Delete' })).toBeVisible();
+  expect(screen.getAllByRole('button')).toHaveLength(2);
 });
 
 test('clicking twice on the like button calls its eventHandler twice', async () => {
-  const button = screen.getByText('Like');
+  const user = userEvent.setup();
+  const mockHandler = vi.fn();
+  render(<Blog blog={blog} user={blog.user} likeBlog={mockHandler} />);
+  const button = screen.getByRole('button', { name: 'Like' });
 
   await user.click(button);
   await user.click(button);
 
-  expect(mockHandler.mock.calls).toHaveLength(2);
+  expect(mockHandler).toHaveBeenCalledTimes(2);
+  expect(mockHandler).toHaveBeenNthCalledWith(1, blog);
+  expect(mockHandler).toHaveBeenNthCalledWith(2, blog);
 });

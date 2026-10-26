@@ -33,11 +33,6 @@ blogSchema.set('toJSON', {
   },
 });
 
-// TODO - change to a different DB for testing
-// To use a different collection on tests
-let testCollection =
-  process.env.NODE_ENV === 'test' ? 'blogs-tests' : undefined;
-
-const Blog = mongoose.model('Blog', blogSchema, testCollection);
+const Blog = mongoose.model('Blog', blogSchema);
 
 module.exports = Blog;
