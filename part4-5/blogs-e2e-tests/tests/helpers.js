@@ -15,11 +15,11 @@ const addBlog = async (page, title, author, url) => {
   await page.getByLabel('url').fill(url);
 
   await page.getByRole('button', { name: 'Submit' }).click();
-  await expect(page.getByRole('link', { name: `${title} ${author}`, exact: true })).toBeVisible();
+  await expect(page.getByRole('row', { name: `${title} ${author}`, exact: true })).toBeVisible();
 };
 
 const likeBlog = async (page, title, likes) => {
-  await page.getByRole('link').filter({ hasText: title }).click();
+  await page.getByRole('link', { name: title, exact: true }).click();
   for (let count = 1; count <= likes; count++) {
     await page.getByRole('button', { name: 'Like', exact: true }).click();
     await expect(page.getByTestId('blog-likes')).toHaveText(`${count} Like`);

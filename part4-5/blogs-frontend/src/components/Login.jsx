@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Button, Stack, TextField, Typography } from '@mui/material';
 
 const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('');
@@ -20,24 +21,28 @@ const Login = ({ onLogin }) => {
 
   return (
     <div>
-      <h2>Login</h2>
+      <Typography variant="h5" component="h2" gutterBottom>
+        Login
+      </Typography>
       <form onSubmit={handleSubmit}>
-        <label>
-          username
-          <input
+        <Stack spacing={2} sx={{ maxWidth: 400 }}>
+          <TextField
+            id="username"
+            label="username"
             value={username}
             onChange={({ target }) => setUsername(target.value)}
-          ></input>
-        </label>
-        <label>
-          password
-          <input
+          />
+          <TextField
+            id="password"
+            label="password"
+            type="password"
             value={password}
             onChange={({ target }) => setPassword(target.value)}
-          ></input>
-        </label>
-        <br></br>
-        <button>Login</button>
+          />
+          <Button type="submit" variant="contained">
+            Login
+          </Button>
+        </Stack>
       </form>
     </div>
   );

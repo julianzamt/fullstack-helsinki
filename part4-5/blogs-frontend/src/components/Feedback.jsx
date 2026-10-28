@@ -1,13 +1,7 @@
-import { SUCCESS } from '../constants';
+import { Alert } from '@mui/material';
 
-const Feedback = ({ feedback: { text, type } }) => {
-  const style = {
-    border: '1px solid black',
-    padding: '10px',
-    color: type === SUCCESS ? 'green' : 'red',
-  };
-
-  return <div style={style}>{text}</div>;
-};
+const Feedback = ({ feedback: { text, type } }) => (
+  <Alert severity={type}>{text}</Alert>
+);
 
 export default Feedback;

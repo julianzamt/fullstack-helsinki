@@ -9,6 +9,14 @@ import Login from './components/Login';
 import Feedback from './components/Feedback';
 import { ERR, SUCCESS } from './constants';
 import { Routes, Route, Link, useNavigate, useMatch } from 'react-router-dom';
+import {
+  AppBar,
+  Box,
+  Button,
+  Container,
+  Toolbar,
+  Typography,
+} from '@mui/material';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -18,10 +26,6 @@ const App = () => {
   const navigate = useNavigate();
   const match = useMatch('/blogs/:id');
   const blog = match ? blogs.find((b) => b.id === match.params.id) : null;
-
-  const padding = {
-    padding: 5,
-  };
 
   useEffect(() => {
     const loadBlogs = async () => {
@@ -160,26 +164,32 @@ const App = () => {
   };
 
   return (
-    <>
-      <h1>Blogs</h1>
-      <div>
-        <Link style={padding} to="/">
-          Home
-        </Link>
-        {!user && (
-          <Link style={padding} to="/login">
-            Login
-          </Link>
-        )}
-        {user && (
-          <Link style={padding} to="/create">
-            Add Blog
-          </Link>
-        )}
-        {user && <UserInfo user={user} onLogout={handleLogout} />}
-      </div>
-      <hr />
-      {feedback && <Feedback feedback={feedback} />}
+    <Container>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" component="h1" sx={{ mr: 2 }}>
+            Blogs
+          </Typography>
+          <Button color="inherit" component={Link} to="/">
+            Home
+          </Button>
+          {!user && (
+            <Button color="inherit" component={Link} to="/login">
+              Login
+            </Button>
+          )}
+          {user && (
+            <Button color="inherit" component={Link} to="/create">
+              Add Blog
+            </Button>
+          )}
+          <Box sx={{ flexGrow: 1 }} />
+          {user && <UserInfo user={user} onLogout={handleLogout} />}
+        </Toolbar>
+      </AppBar>
+      <Box sx={{ my: 2 }}>
+        {feedback && <Feedback feedback={feedback} />}
+      </Box>
 
       <Routes>
         <Route
@@ -207,7 +217,7 @@ const App = () => {
           }
         />
       </Routes>
-    </>
+    </Container>
   );
 };
 
